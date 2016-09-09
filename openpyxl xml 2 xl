@@ -1,0 +1,19 @@
+Enter file contents hereimport xml.etree.ElementTree as etree
+from openpyxl import Workbook
+xmld = etree.parse('simple.xml')
+root = xmld.getroot()
+wb = Workbook()
+ws = wb.active
+for child in root:
+    for children in child:
+     #print children.tag," : % s" %children.text
+     for row in zip({children.tag},{children.text}):
+        ws.append(row)
+        dims = {}
+        for row in ws.rows:
+            for cell in row:
+                if cell.value:
+                    dims[cell.column] = max((dims.get(cell.column, 0), len(cell.value)))
+        for col, value in dims.items():
+            ws.column_dimensions[col].width = value
+        wb.save("success.xls")
